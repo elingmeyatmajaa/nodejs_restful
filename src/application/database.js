@@ -1,39 +1,22 @@
-import pkg from "@prisma/client";
+import { PrismaClient } from "../generated/prisma/client.ts";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { logger } from "./logging.js";
 
-const { PrismaClient } = pkg;
-
-export const prismaClient = new PrismaClient({
-    log: [
-        {
-            emit: 'event',
-            level: 'query',
-        },
-        {
-            emit: 'event',
-            level: 'error',
-        },
-        {
-            emit: 'event',
-            level: 'info',
-        },
-        {
-            emit: 'event',
-            level: 'warn',
-        },
-    ],
+const adapter = new PrismaMariaDb({
+  url: process.env.DATABASE_URL,
 });
 
-prismaClient.$on('erorr', (e) => {
-    logger.error(e);
-})
-prismaClient.$on('warn', (e) => {
-    logger.warn(e);
-})
+export const prismaClient = new PrismaClient({
+  adapter,
+  log: [
+    { emit: "event", level: "query" },
+    { emit: "event", level: "error" },
+    { emit: "event", level: "info" },
+    { emit: "event", level: "warn" },
+  ],
+});
 
-prismaClient.$on('info', (e) => {
-    logger.info(e);
-})
-prismaClient.$on('query', (e) => {
-    logger.info(e);
-})
+prismaClient.$on("error", (e) => logger.error(e));
+prismaClient.$on("warn", (e) => logger.warn(e));
+prismaClient.$on("info", (e) => logger.info(e));
+prismaClient.$on("query", (e) => logger.info(e));

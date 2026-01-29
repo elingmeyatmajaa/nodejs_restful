@@ -6,13 +6,12 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
 }
-
 
 model User {
   username String @id @db.VarChar(100)
@@ -24,7 +23,6 @@ model User {
 
   @@map("users")
 }
-
 
 model Contact {
   id Int @id @default(autoincrement())
@@ -38,7 +36,6 @@ model Contact {
   
   @@map("contacts")
 }
-
 
 model Address {
   id Int @id @default(autoincrement())
